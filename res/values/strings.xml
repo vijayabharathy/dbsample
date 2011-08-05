@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, DBSample!</string>
+    <string name="app_name">DB Sample</string>
+    <string name="base_amount_setting">Enter Base Amount</string>
+    <string name="balance_text">Balance: 0</string>
+</resources>
