@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DBBase {
 
-   private static final String DATABASE_NAME = "dbexample.db";
+   private static final String DATABASE_NAME = "moneymanager.db";
    private static final int DATABASE_VERSION = 4;
    private static final String EXPENDITURE_TABLE = "expenditure";
    private static final String SETTINGS_TABLE = "defalut_setting";
@@ -110,6 +110,9 @@ public class DBBase {
 		   return row;
 	   
    }
+   
+   
+  
    
 
    private static class OpenHelper extends SQLiteOpenHelper {

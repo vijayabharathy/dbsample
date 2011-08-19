@@ -16,10 +16,10 @@ import android.widget.TextView;
 import android.content.Intent;
 
 
-public class DBSample extends Activity {
+public class DailyExpenditure extends Activity {
     /** Called when the activity is first created. */
 	
-	private EditText i_put;
+	private EditText expenditure_type;
 	private EditText amount_put;
 	private Button save_button;
 	private TextView out_text;
@@ -34,7 +34,7 @@ public class DBSample extends Activity {
         setContentView(R.layout.main);
         this.db_base = new DBBase(getApplicationContext());
 //        this.balance_amount = (TextView) this.findViewById(R.id.balance_amount);
-        this.i_put = (EditText) this.findViewById(R.id.i_put);
+        this.expenditure_type = (EditText) this.findViewById(R.id.expenditure_type);
         this.amount_put = (EditText) this.findViewById(R.id.amount_put);
         this.save_button = (Button) this.findViewById(R.id.save_button);
         this.out_text = (TextView) this.findViewById(R.id.out_text);
@@ -49,7 +49,7 @@ public class DBSample extends Activity {
         new OnLoadTask().execute();
         this.save_button.setOnClickListener(new OnClickListener() {
         	public void onClick(final View v) {
-              new OnSaveTask().execute(DBSample.this.i_put.getText().toString(), DBSample.this.amount_put.getText().toString());
+              new OnSaveTask().execute(DailyExpenditure.this.expenditure_type.getText().toString(), DailyExpenditure.this.amount_put.getText().toString());
               
             }
          });
@@ -58,7 +58,7 @@ public class DBSample extends Activity {
 	
 	
 	public class OnLoadTask extends AsyncTask<String, Void, String>{
-		 private final ProgressDialog dialog = new ProgressDialog(DBSample.this);
+		 private final ProgressDialog dialog = new ProgressDialog(DailyExpenditure.this);
 		 
 		 protected void onPreExecute() {
 	         this.dialog.setMessage("Selecting data...");
@@ -67,7 +67,7 @@ public class DBSample extends Activity {
 
 	     
 		 protected String doInBackground(final String... args) {
-	         List<String> names = DBSample.this.db_base.selectAll();	         
+	         List<String> names = DailyExpenditure.this.db_base.selectAll();	         
 	         StringBuilder sb = new StringBuilder();
 	         for (String name : names) {
 	            sb.append(name + "\n");
@@ -87,15 +87,15 @@ public class DBSample extends Activity {
 //		            
 //		         }
 //	         DBSample.this.balance_amount.setText(sb.toString());
-	         DBSample.this.out_text.setText(result);
+	         DailyExpenditure.this.out_text.setText(result);
 	         
-	         DBSample.this.i_put.setText("");
-	         DBSample.this.amount_put.setText("");
+	         DailyExpenditure.this.expenditure_type.setText("");
+	         DailyExpenditure.this.amount_put.setText("");
 	      }
 		
 	}
 	private class OnSaveTask extends AsyncTask<String, Void, String>{
-		private final ProgressDialog dialog = new ProgressDialog(DBSample.this);
+		private final ProgressDialog dialog = new ProgressDialog(DailyExpenditure.this);
 		 
 		 protected void onPreExecute() {
 	         this.dialog.setMessage("inserting data...");
@@ -105,7 +105,7 @@ public class DBSample extends Activity {
 
 	      protected String doInBackground(final String... args) {
 	    	  double amount = Double.valueOf(args[1]);
-	    	  DBSample.this.db_base.insert(args[0], amount);
+	    	  DailyExpenditure.this.db_base.insert(args[0], amount);
 	    	  return null;
 	      }
 

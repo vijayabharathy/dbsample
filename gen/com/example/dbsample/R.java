@@ -17,10 +17,11 @@ public final class R {
         public static final int amount_put=0x7f050001;
         public static final int balance_amount=0x7f050002;
         public static final int base_amount=0x7f050006;
-        public static final int i_put=0x7f050000;
+        public static final int expenditure_type=0x7f050000;
         public static final int out_text=0x7f050004;
         public static final int save_button=0x7f050003;
-        public static final int save_setting1=0x7f050007;
+        public static final int save_setting1=0x7f050008;
+        public static final int savings_amount=0x7f050007;
         public static final int setting=0x7f050005;
     }
     public static final class layout {
@@ -29,8 +30,10 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040001;
-        public static final int balance_text=0x7f040003;
+        public static final int balance_text=0x7f040005;
         public static final int base_amount_setting=0x7f040002;
+        public static final int default_expenditure_type=0x7f040004;
         public static final int hello=0x7f040000;
+        public static final int saving_setting=0x7f040003;
     }
 }

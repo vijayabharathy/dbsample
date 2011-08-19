@@ -18,6 +18,7 @@ import android.os.Bundle;
 public class Settings extends Activity {
 	
 	private EditText base_amount;
+	private EditText savings_amount;
 	private Button save_setting;
 	private DBBase db_base;
 	private TextView out_text;
@@ -34,12 +35,13 @@ public class Settings extends Activity {
 	        this.db_base = new DBBase(getApplicationContext());
 	        
 	        this.base_amount = (EditText) this.findViewById(R.id.base_amount);
+	        this.savings_amount = (EditText) this.findViewById(R.id.savings_amount);
 	        this.save_setting = (Button) this.findViewById(R.id.save_setting1);
 	        this.out_text = (TextView) this.findViewById(R.id.out_text);
 	        new OnLoadTask().execute();
 	        this.save_setting.setOnClickListener(new OnClickListener() {
 	        	public void onClick(final View v) {
-	              new OnSaveTask().execute(Settings.this.base_amount.getText().toString());
+	              new OnSaveTask().execute(Settings.this.base_amount.getText().toString(), Settings.this.savings_amount.getText().toString());
 	              
 	            }
 	         });
@@ -71,7 +73,7 @@ public class Settings extends Activity {
 	         }
 	         
 	         Settings.this.out_text.setText(result);
-	         
+
 	      }
 		
 	}
@@ -86,8 +88,10 @@ public class Settings extends Activity {
 
 
 	      protected String doInBackground(final String... args) {
-	    	  double amount = Double.valueOf(args[0]);
-	    	  Settings.this.db_base.save_settings("base_amount", amount);
+	    	  double income_amount = Double.valueOf(args[0]);
+	    	  double savings_amount = Double.valueOf(args[1]);
+	    	  Settings.this.db_base.save_settings("base_amount", income_amount);
+	    	  Settings.this.db_base.save_settings("savings_amount", savings_amount);
 	    	  return null;
 	      }
 

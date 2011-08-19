@@ -10,12 +10,8 @@
     android:layout_height="wrap_content" 
     android:text="@string/hello"
     />
+<Spinner android:id="@+id/expenditure_type" android:layout_height="wrap_content" android:layout_width="fill_parent"></Spinner>
 
-<EditText 
-	android:layout_height="wrap_content" 
-	android:id="@+id/i_put" 
-	android:layout_width="fill_parent">
-	</EditText>
 	
 <EditText 
 	android:layout_height="wrap_content" 
@@ -25,6 +21,7 @@
 	</EditText>
 
 <TextView android:layout_height="wrap_content" android:id="@+id/balance_amount" android:layout_width="fill_parent" android:text="@string/balance_text"></TextView>
+
 	
 <Button 
 	android:text="Save" 
