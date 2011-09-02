@@ -6,4 +6,12 @@
     <string name="saving_setting">Enter amount to save this month</string>
     <string name="default_expenditure_type">  </string>
     <string name="balance_text">Balance: 0</string>
+    <string name="expenditure_prompt">Choose expenditure type</string>
+    <string-array name="expenditure_array">
+        <item>Food</item>
+        <item>Drinks</item>
+        <item>Home Appliances</item>
+        <item>Utilities</item>
+    </string-array>
+    
 </resources>

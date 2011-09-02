@@ -10,7 +10,12 @@
     android:layout_height="wrap_content" 
     android:text="@string/hello"
     />
-<Spinner android:id="@+id/expenditure_type" android:layout_height="wrap_content" android:layout_width="fill_parent"></Spinner>
+<Spinner 
+	android:id="@+id/expenditure_type" 
+	android:layout_height="wrap_content" 
+	android:layout_width="fill_parent"
+	android:prompt="@string/expenditure_prompt"
+	/>
 
 	
 <EditText 

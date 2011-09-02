@@ -10,8 +10,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.content.Intent;
 
@@ -19,11 +21,11 @@ import android.content.Intent;
 public class DailyExpenditure extends Activity {
     /** Called when the activity is first created. */
 	
-	private EditText expenditure_type;
+	private Spinner expenditure_type;
 	private EditText amount_put;
 	private Button save_button;
 	private TextView out_text;
-//	private TextView balance_amount;
+
 	
 	 
 	private DBBase db_base;
@@ -33,8 +35,8 @@ public class DailyExpenditure extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         this.db_base = new DBBase(getApplicationContext());
-//        this.balance_amount = (TextView) this.findViewById(R.id.balance_amount);
-        this.expenditure_type = (EditText) this.findViewById(R.id.expenditure_type);
+
+        this.expenditure_type = (Spinner) this.findViewById(R.id.expenditure_type);
         this.amount_put = (EditText) this.findViewById(R.id.amount_put);
         this.save_button = (Button) this.findViewById(R.id.save_button);
         this.out_text = (TextView) this.findViewById(R.id.out_text);
@@ -44,12 +46,18 @@ public class DailyExpenditure extends Activity {
                 startActivity(new Intent(v.getContext(), Settings.class));
             }
         });
+        
+        Spinner s1 = (Spinner) findViewById(R.id.expenditure_type);
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1, db_base.ExpenditureTypes());
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        s1.setAdapter(adapter);
 
 
         new OnLoadTask().execute();
         this.save_button.setOnClickListener(new OnClickListener() {
         	public void onClick(final View v) {
-              new OnSaveTask().execute(DailyExpenditure.this.expenditure_type.getText().toString(), DailyExpenditure.this.amount_put.getText().toString());
+              new OnSaveTask().execute(DailyExpenditure.this.expenditure_type.getSelectedItem().toString(), DailyExpenditure.this.amount_put.getText().toString());
               
             }
          });
@@ -80,16 +88,10 @@ public class DailyExpenditure extends Activity {
 	         if (this.dialog.isShowing()) {
 	            this.dialog.dismiss();
 	         }
-//	         List<String> balance_amount = DBSample.this.db_base.get_balance_amount();
-//	         StringBuilder sb = new StringBuilder();
-//	         for (String name : balance_amount) {
-//		            sb.append(name + "\n");
-//		            
-//		         }
-//	         DBSample.this.balance_amount.setText(sb.toString());
+
 	         DailyExpenditure.this.out_text.setText(result);
 	         
-	         DailyExpenditure.this.expenditure_type.setText("");
+//	         DailyExpenditure.this.expenditure_type.setText("");
 	         DailyExpenditure.this.amount_put.setText("");
 	      }
 		
@@ -109,7 +111,7 @@ public class DailyExpenditure extends Activity {
 	    	  return null;
 	      }
 
-	      // can use UI thread here
+
 	      protected void onPostExecute(final String result) {
 	         if (this.dialog.isShowing()) {
 	            this.dialog.dismiss();

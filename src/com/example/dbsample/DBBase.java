@@ -14,17 +14,21 @@ import java.util.List;
 public class DBBase {
 
    private static final String DATABASE_NAME = "moneymanager.db";
-   private static final int DATABASE_VERSION = 4;
+   private static final int DATABASE_VERSION = 6;
    private static final String EXPENDITURE_TABLE = "expenditure";
    private static final String SETTINGS_TABLE = "defalut_setting";
+   private static final String EXPENDITURE_TYPE_TABLE = "expenditure_type";
 
    private Context context;
    private SQLiteDatabase db;
 
    private SQLiteStatement insertStmt;
 
-   private static final String INSERT = "insert into " + EXPENDITURE_TABLE + "(reason, amount) values (?, ?)";
-
+   private static final String INSERT_TO_EXP = "insert into " + EXPENDITURE_TABLE + "(expenditure_type_id, amount) values (?, ?)";
+   private static final String INSERT_TO_EXP_TYPE = "insert into " + EXPENDITURE_TYPE_TABLE + "(exp_type) values (?)";
+   private static final String[] DEFAULT_EXP_TYPE =  new String[] {
+	   "Food", "Travel", "House Rent", "Internet", "Telephone", "Others"
+   };
 
 
 
@@ -32,7 +36,8 @@ public class DBBase {
       this.context = context;
       OpenHelper openHelper = new OpenHelper(this.context);
       this.db = openHelper.getWritableDatabase();
-      this.insertStmt = this.db.compileStatement(INSERT);
+      this.insertStmt = this.db.compileStatement(INSERT_TO_EXP);
+      
    }
    
    public SQLiteDatabase getDb() {
@@ -52,7 +57,7 @@ public class DBBase {
 
    public List<String> selectAll() {
       List<String> list = new ArrayList<String>();
-      Cursor cursor = this.db.query(EXPENDITURE_TABLE, new String[] { "reason", "amount" }, null, null, null, null, "id desc");
+      Cursor cursor = this.db.query(EXPENDITURE_TABLE, new String[] { "expenditure_type_id", "amount" }, null, null, null, null, "id desc");
       if (cursor.moveToFirst()) {
          do {
             list.add(cursor.getString(0)); 
@@ -65,7 +70,7 @@ public class DBBase {
    }
    
    public List<String> get_balance_amount() {
-	   List<String> list = new ArrayList<String>();;
+	   List<String> list = new ArrayList<String>();
 	   
 	      Cursor cursor = this.db.query(EXPENDITURE_TABLE, new String[] { "sum(amount) as e_amount" }, null, null, null, null, null);
 	      if (cursor.moveToFirst()) {
@@ -85,6 +90,20 @@ public class DBBase {
 	      if (cursor.moveToFirst()) {
 	         do {
 	            list.add(cursor.getString(cursor.getColumnIndex("setting_key")) + ":"+ cursor.getString(cursor.getColumnIndex("setting_value"))); 
+	         } while (cursor.moveToNext());
+	      }
+	      if (cursor != null && !cursor.isClosed()) {
+	         cursor.close();
+	      }
+	      return list;
+	   }
+   
+   public List<String> ExpenditureTypes() {
+	      List<String> list = new ArrayList<String>();
+	      Cursor cursor = this.db.query(EXPENDITURE_TYPE_TABLE, new String[] { "exp_type" }, null, null, null, null, "id desc");
+	      if (cursor.moveToFirst()) {
+	         do {
+	            list.add(cursor.getString(cursor.getColumnIndex("exp_type"))); 
 	         } while (cursor.moveToNext());
 	      }
 	      if (cursor != null && !cursor.isClosed()) {
@@ -116,23 +135,37 @@ public class DBBase {
    
 
    private static class OpenHelper extends SQLiteOpenHelper {
-
+	 
       OpenHelper(Context context) {
          super(context, DATABASE_NAME, null, DATABASE_VERSION);
       }
 
       @Override
       public void onCreate(SQLiteDatabase db) {
-         db.execSQL("CREATE TABLE " + EXPENDITURE_TABLE + " (id INTEGER PRIMARY KEY, reason TEXT, amount NUMERIC)");
+         db.execSQL("CREATE TABLE " + EXPENDITURE_TABLE + " (id INTEGER PRIMARY KEY, expenditure_type_id TEXT, amount NUMERIC)");
          db.execSQL("CREATE TABLE " + SETTINGS_TABLE + " (id INTEGER PRIMARY KEY, setting_key TEXT, setting_value NUMERIC)");
+         db.execSQL("CREATE TABLE " + EXPENDITURE_TYPE_TABLE + " (id INTEGER PRIMARY KEY, exp_type TEXT)");
+         insert_default_exp_type(db);
       }
+      
+      public void insert_default_exp_type(SQLiteDatabase db){    	      	  
+    	  SQLiteStatement stmt = db.compileStatement(INSERT_TO_EXP_TYPE);
+    	  for (int i = 0; i < DEFAULT_EXP_TYPE.length; ++i) {    		  
+    		  stmt.bindString(1, DEFAULT_EXP_TYPE[i]);
+    		  stmt.execute();
+          }
+
+      }
+
 
       @Override
       public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
          
          db.execSQL("DROP TABLE IF EXISTS " + EXPENDITURE_TABLE);
          db.execSQL("DROP TABLE IF EXISTS " + SETTINGS_TABLE);
+         db.execSQL("DROP TABLE IF EXISTS " + EXPENDITURE_TYPE_TABLE);
          onCreate(db);
       }
-   }
+      
+         }
 }
