@@ -14,7 +14,7 @@ import java.util.List;
 public class DBBase {
 
    private static final String DATABASE_NAME = "moneymanager.db";
-   private static final int DATABASE_VERSION = 6;
+   private static final int DATABASE_VERSION = 8;
    private static final String EXPENDITURE_TABLE = "expenditure";
    private static final String SETTINGS_TABLE = "defalut_setting";
    private static final String EXPENDITURE_TYPE_TABLE = "expenditure_type";
@@ -27,11 +27,11 @@ public class DBBase {
    private static final String INSERT_TO_EXP = "insert into " + EXPENDITURE_TABLE + "(expenditure_type_id, amount) values (?, ?)";
    private static final String INSERT_TO_EXP_TYPE = "insert into " + EXPENDITURE_TYPE_TABLE + "(exp_type) values (?)";
    private static final String[] DEFAULT_EXP_TYPE =  new String[] {
-	   "Food", "Travel", "House Rent", "Internet", "Telephone", "Others"
+	   "Food", "Travel", "House Rent", "Internet", "Telephone"
    };
 
-
-
+   private OpenHelper open_helper;
+   
    public DBBase(Context context) {
       this.context = context;
       OpenHelper openHelper = new OpenHelper(this.context);
@@ -100,6 +100,7 @@ public class DBBase {
    
    public List<String> ExpenditureTypes() {
 	      List<String> list = new ArrayList<String>();
+	      
 	      Cursor cursor = this.db.query(EXPENDITURE_TYPE_TABLE, new String[] { "exp_type" }, null, null, null, null, "id desc");
 	      if (cursor.moveToFirst()) {
 	         do {
@@ -109,6 +110,7 @@ public class DBBase {
 	      if (cursor != null && !cursor.isClosed()) {
 	         cursor.close();
 	      }
+	      list.add("Others");
 	      return list;
 	   }
    
@@ -130,7 +132,12 @@ public class DBBase {
 	   
    }
    
+   public void insert_into_expenditure(String[] expenditure_type, Context context){
+	  open_helper = new OpenHelper(context);
+	  this.open_helper.insert_into_expenditure(expenditure_type, this.db);
+      }
    
+  
   
    
 
@@ -149,16 +156,22 @@ public class DBBase {
       }
       
       public void insert_default_exp_type(SQLiteDatabase db){    	      	  
-    	  SQLiteStatement stmt = db.compileStatement(INSERT_TO_EXP_TYPE);
-    	  for (int i = 0; i < DEFAULT_EXP_TYPE.length; ++i) {    		  
-    		  stmt.bindString(1, DEFAULT_EXP_TYPE[i]);
-    		  stmt.execute();
-          }
+    	  this.insert_into_expenditure(DEFAULT_EXP_TYPE, db);
 
       }
+      
+      
+      public void insert_into_expenditure(String[] expenditure_type, SQLiteDatabase db){
+   	   SQLiteStatement stmt = db.compileStatement(INSERT_TO_EXP_TYPE);
+    	  for (int i = 0; i < expenditure_type.length; ++i) {    		  
+    		  stmt.bindString(1, expenditure_type[i]);
+    		  stmt.execute();
+          }
+   	   
+   	   
+      }
 
-
-      @Override
+	@Override
       public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
          
          db.execSQL("DROP TABLE IF EXISTS " + EXPENDITURE_TABLE);

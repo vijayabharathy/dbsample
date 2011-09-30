@@ -10,11 +10,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.content.Intent;
 
 
@@ -22,10 +25,10 @@ public class DailyExpenditure extends Activity {
     /** Called when the activity is first created. */
 	
 	private Spinner expenditure_type;
-	private EditText amount_put;
+	private EditText amount_put, new_expenditure_type;
 	private Button save_button;
 	private TextView out_text;
-
+	private ArrayAdapter<String> adapter;
 	
 	 
 	private DBBase db_base;
@@ -40,6 +43,13 @@ public class DailyExpenditure extends Activity {
         this.amount_put = (EditText) this.findViewById(R.id.amount_put);
         this.save_button = (Button) this.findViewById(R.id.save_button);
         this.out_text = (TextView) this.findViewById(R.id.out_text);
+
+        this.new_expenditure_type = (EditText) findViewById(R.id.new_expenditure_type);
+        
+        this.new_expenditure_type.setVisibility(View.GONE);
+
+        
+        
         Button setting_button = (Button) findViewById(R.id.setting);
         setting_button.setOnClickListener(new OnClickListener() {
             public void onClick(final View v) {                   
@@ -47,18 +57,47 @@ public class DailyExpenditure extends Activity {
             }
         });
         
-        Spinner s1 = (Spinner) findViewById(R.id.expenditure_type);
+        Spinner spinner = (Spinner) findViewById(R.id.expenditure_type);
         
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1, db_base.ExpenditureTypes());
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        s1.setAdapter(adapter);
+        this.adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1, db_base.ExpenditureTypes());
 
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				if(arg0.getItemAtPosition(arg2).toString() == "Others"){
+					new_expenditure_type.setVisibility(View.VISIBLE);
+				}
+				else{
+					new_expenditure_type.setVisibility(View.GONE);
+				}
+				
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				
+				
+			}
+           
+
+        });
+
+        
 
         new OnLoadTask().execute();
         this.save_button.setOnClickListener(new OnClickListener() {
         	public void onClick(final View v) {
-              new OnSaveTask().execute(DailyExpenditure.this.expenditure_type.getSelectedItem().toString(), DailyExpenditure.this.amount_put.getText().toString());
-              
+        	  String expenditure_type = DailyExpenditure.this.expenditure_type.getSelectedItem().toString();
+        	  if (DailyExpenditure.this.expenditure_type.getSelectedItem().toString() == "Others"){
+        		  expenditure_type = DailyExpenditure.this.new_expenditure_type.getText().toString();
+        		  String[] new_expenditure =  new String[] {
+        				  expenditure_type
+        			   };        		  
+        		  DailyExpenditure.this.db_base.insert_into_expenditure(new_expenditure, getApplicationContext());
+        	  }
+              new OnSaveTask().execute(expenditure_type, DailyExpenditure.this.amount_put.getText().toString());
             }
          });
         
@@ -90,8 +129,11 @@ public class DailyExpenditure extends Activity {
 	         }
 
 	         DailyExpenditure.this.out_text.setText(result);
-	         
-//	         DailyExpenditure.this.expenditure_type.setText("");
+	         Spinner spinner = (Spinner) findViewById(R.id.expenditure_type);
+	         DailyExpenditure.this.adapter = new ArrayAdapter<String>(DailyExpenditure.this, android.R.layout.simple_spinner_item, android.R.id.text1, db_base.ExpenditureTypes());
+
+	         spinner.setAdapter(adapter);
+
 	         DailyExpenditure.this.amount_put.setText("");
 	      }
 		
@@ -107,7 +149,10 @@ public class DailyExpenditure extends Activity {
 
 	      protected String doInBackground(final String... args) {
 	    	  double amount = Double.valueOf(args[1]);
+	    	  
 	    	  DailyExpenditure.this.db_base.insert(args[0], amount);
+
+	    	  
 	    	  return null;
 	      }
 

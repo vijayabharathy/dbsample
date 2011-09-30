@@ -17,13 +17,24 @@
 	android:prompt="@string/expenditure_prompt"
 	/>
 
+
+<EditText 
+	android:layout_height="wrap_content" 
+	android:id="@+id/new_expenditure_type"	
+	android:layout_width="fill_parent"
+	android:hint="Enter the Expenditure type">
+	</EditText>
 	
 <EditText 
 	android:layout_height="wrap_content" 
 	android:id="@+id/amount_put"	
 	android:numeric="integer|decimal"
-	android:layout_width="fill_parent">
+	android:layout_width="fill_parent"
+	android:hint="Enter the amount you spend">
 	</EditText>
+
+
+
 
 <TextView android:layout_height="wrap_content" android:id="@+id/balance_amount" android:layout_width="fill_parent" android:text="@string/balance_text"></TextView>
 
