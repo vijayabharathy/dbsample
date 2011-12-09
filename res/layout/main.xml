@@ -4,12 +4,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout2">
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:orientation="horizontal">
+            <Button android:text="Settings" android:layout_height="wrap_content" android:id="@+id/setting" android:layout_width="wrap_content"></Button>
+            <SeekBar android:id="@+id/seekBar1" android:layout_width="100dip" android:layout_height="wrap_content" android:layout_gravity="top"></SeekBar>
+            
+        </LinearLayout>
+    </LinearLayout>
 <Spinner 
 	android:id="@+id/expenditure_type" 
 	android:layout_height="wrap_content" 
@@ -37,16 +38,9 @@
 
 
 <TextView android:layout_height="wrap_content" android:id="@+id/balance_amount" android:layout_width="fill_parent" android:text="@string/balance_text"></TextView>
-
-	
-<Button 
-	android:text="Save" 
-	android:id="@+id/save_button" 
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content">
-	</Button>   
-	
-<TextView android:id="@+id/out_text" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
-<Button android:text="Settings" android:id="@+id/setting" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+<Button android:text="Save" android:layout_height="wrap_content" android:id="@+id/save_button" android:layout_width="fill_parent"></Button>
+<TableLayout android:id="@+id/tableLayout1" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    
+    
+</TableLayout>
 </LinearLayout>

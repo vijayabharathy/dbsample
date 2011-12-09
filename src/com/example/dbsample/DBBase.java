@@ -14,7 +14,7 @@ import java.util.List;
 public class DBBase {
 
    private static final String DATABASE_NAME = "moneymanager.db";
-   private static final int DATABASE_VERSION = 8;
+   private static final int DATABASE_VERSION = 9;
    private static final String EXPENDITURE_TABLE = "expenditure";
    private static final String SETTINGS_TABLE = "defalut_setting";
    private static final String EXPENDITURE_TYPE_TABLE = "expenditure_type";
@@ -26,6 +26,8 @@ public class DBBase {
 
    private static final String INSERT_TO_EXP = "insert into " + EXPENDITURE_TABLE + "(expenditure_type_id, amount) values (?, ?)";
    private static final String INSERT_TO_EXP_TYPE = "insert into " + EXPENDITURE_TYPE_TABLE + "(exp_type) values (?)";
+   private static final String DELETE_FROM_EXP = "delete from " + EXPENDITURE_TABLE + " where id = ?";
+   
    private static final String[] DEFAULT_EXP_TYPE =  new String[] {
 	   "Food", "Travel", "House Rent", "Internet", "Telephone"
    };
@@ -45,7 +47,8 @@ public class DBBase {
    }
 
    public long insert(String reason, double amount) {
-	   this.insertStmt.bindString(1, reason + amount);
+	   this.insertStmt.bindDouble(2, amount);
+	   this.insertStmt.bindString(1, reason);
 
 	      return this.insertStmt.executeInsert();
 
@@ -54,13 +57,20 @@ public class DBBase {
    public void deleteAll() {
       this.db.delete(EXPENDITURE_TABLE, null, null);
    }
+   
+   public void delete_from_exp(int exp_id){
+	   SQLiteStatement stmt = db.compileStatement(DELETE_FROM_EXP);
+ 		  stmt.bindLong(1, exp_id);
+ 		  stmt.execute();
+   
+   }
 
    public List<String> selectAll() {
       List<String> list = new ArrayList<String>();
-      Cursor cursor = this.db.query(EXPENDITURE_TABLE, new String[] { "expenditure_type_id", "amount" }, null, null, null, null, "id desc");
+      Cursor cursor = this.db.query(EXPENDITURE_TABLE, new String[] { "expenditure_type_id", "amount", "id" }, null, null, null, null, "id desc");
       if (cursor.moveToFirst()) {
          do {
-            list.add(cursor.getString(0)); 
+            list.add(cursor.getString(0) + ";" + cursor.getDouble(1) + ";" + cursor.getInt(2)); 
          } while (cursor.moveToNext());
       }
       if (cursor != null && !cursor.isClosed()) {
@@ -137,10 +147,37 @@ public class DBBase {
 	  this.open_helper.insert_into_expenditure(expenditure_type, this.db);
       }
    
-  
-  
-   
+   public long amount_spend(){
+	   long exp_amount = 0;
 
+
+	   Cursor cursor = this.db.query(EXPENDITURE_TABLE, new String[] { "sum(amount) as f_amount"}, null, null, null, null, null);
+	   if(cursor.moveToFirst()) {
+		    exp_amount = cursor.getInt(0);
+		}
+	return exp_amount;
+	  
+	   
+   }
+  
+   public String get_key_from_setting(String key_name){
+	   String setting_value = "0";
+	   Cursor c = this.db.query(SETTINGS_TABLE, new String[]{"setting_value"}, "setting_key=?", new String[]{key_name} , null, null, null);
+	   if(c.moveToFirst()) {
+		   setting_value = c.getString(c.getColumnIndex("setting_value"));
+	   }
+	   return setting_value;
+   }
+
+   public boolean valid_expenditure_type(String newExpenditure){
+	   boolean valid = true;
+	   Cursor c = this.db.query(EXPENDITURE_TYPE_TABLE,  new String[]{"exp_type"}, "exp_type=?", new String[]{newExpenditure} , null, null, null);
+	   if(c.moveToFirst()) {
+		   valid = false;
+	   }
+	   return valid;
+   }
+   
    private static class OpenHelper extends SQLiteOpenHelper {
 	 
       OpenHelper(Context context) {

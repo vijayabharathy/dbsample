@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MoneyManager!</string>
+    <string name="hello">MoneyManager!</string>
     <string name="app_name">Money manager</string>
     <string name="base_amount_setting">Enter this Monthly income</string>
     <string name="saving_setting">Enter amount to save this month</string>
